@@ -13,6 +13,10 @@ class Play extends Phaser.Scene {
         
         this.sky.depth = 3
         this.road.depth = 2
+
+        //grabbable items
+        this.bottle01 = new Collectible(this, game.config.width / 4, game.config.height / 2, 'bottle')
+        this.butt01 = new Collectible(this, game.config.width / 1.35 , game.config.height / 2, 'butt')
     }  
 
     update() {
