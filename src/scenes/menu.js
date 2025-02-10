@@ -7,6 +7,7 @@ class Menu extends Phaser.Scene {
         //load images and sprites
         this.load.image('grass', './assets/img/backgroundGrass.png')
         this.load.image('sky', './assets/img/backgroundSky.png')
+        this.load.image('road', './assets/img/backgroundRoad.png')
     }
 
     create() {
