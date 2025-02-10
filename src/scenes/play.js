@@ -19,5 +19,6 @@ class Play extends Phaser.Scene {
         //moving sky background
         this.sky.tilePositionX -= 1
         this.road.tilePositionY -= 3
+
     }
 }
