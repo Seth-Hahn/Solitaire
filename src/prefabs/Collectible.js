@@ -6,6 +6,6 @@ class Collectible extends Phaser.GameObjects.Sprite {
     }
 
     update() {
-        
+        this.y -= 2
     }
 }
