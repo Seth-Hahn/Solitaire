@@ -11,7 +11,7 @@ class Play extends Phaser.Scene {
         this.grass = this.add.tileSprite(0,0,640, 480, 'grass').setOrigin(0,0)
         this.road = this.add.tileSprite(0,0,640, 480, 'road').setOrigin(0 ,0)
         
-        this.sky.depth = 3
+        this.sky.depth = 4
         this.road.depth = 2
 
         //grabbable items
@@ -42,12 +42,26 @@ class Play extends Phaser.Scene {
         this.keyGrabRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
         this.keyJump = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
 
+        //display score
+        let scoreConfig = {
+            fontFamily: 'Courier',
+            fontSize: '20px',
+            backgroundColor: '#046307',
+            color: '#FFFFFF',
+            align: 'right',
+            padding: {
+            top: 5,
+            bottom: 5,
+            },
+        } 
+        this.score = 0 //based on pieces of trash collected
+        this.scoreLeft = this.add.text(game.config.width / 40 , game.config.height / 40, `Litter Collected: ${this.score}`, scoreConfig).setDepth(50)
     }  
 
     update() {
         //moving sky background
         this.sky.tilePositionX -= 1
-        this.road.tilePositionY -= 3
+        this.road.tilePositionY -= this.speed / 100
 
         //listen for key presses
         if(Phaser.Input.Keyboard.JustDown(this.keyGrabLeft)) {
@@ -64,8 +78,10 @@ class Play extends Phaser.Scene {
         if(this.isGameOver) {
             return
         }
+
+        let delayBetweenObstacles = 1000
         for(let i = 0; i < this.iterations; i ++) {
-            this.time.delayedCall(2500, () => { //delay spawns between obstacles
+            this.time.delayedCall(i * delayBetweenObstacles, () => { //delay spawns between obstacles
                 let types = ['left', 'right', 'middle']
                 let type = Phaser.Math.RND.pick(types)
 
@@ -73,23 +89,34 @@ class Play extends Phaser.Scene {
 
                 switch ((type)) { //add proper obstacle based on random selection
                     case 'left':
-                        obstacle = this.physics.add.sprite(game.config.width / 4, game.config.height / 2, 'bottle')
+                        obstacle = this.physics.add.sprite(game.config.width / 4, game.config.height / 3, 'bottle')
                         console.log('bottle')
                         break
                 
                     case 'right':
-                        obstacle = this.physics.add.sprite(game.config.width / 1.35 , game.config.height / 2, 'butt')
+                        obstacle = this.physics.add.sprite(game.config.width / 1.35 , game.config.height / 3, 'butt')
                         console.log('butt')
                         break
                     
                     case 'middle':
                         console.log('hole')
-                        obstacle = this.physics.add.sprite(game.config.width / 2, game.config.height / 2, 'hole' ).setDepth(20).setScale(.5)
+                        obstacle = this.physics.add.sprite(game.config.width / 2, game.config.height / 3, 'hole' ).setDepth(3).setScale(.5)
                         break
                 }
 
                 obstacle.body.setVelocityY(this.speed) //set falling speed for obstacle
                 obstacle.type = type
+
+                //delete objects which pass the bottom of the screen
+                this.time.addEvent( {
+                    delay: 3000,
+                    callback: () => {
+                        if(obstacle.y > this.game.config.height) {
+                            this.handleMissedObstacle(obstacle)
+                        }
+                    },
+                    loop: false
+                })
 
                 this.physics.add.overlap(obstacle, this.leftHitbox, () => this.handleHit(obstacle, 'left'))
                 this.physics.add.overlap(obstacle, this.rightHitbox, () => this.handleHit(obstacle, 'right'))
@@ -101,7 +128,8 @@ class Play extends Phaser.Scene {
         //schedule next obstacle
         this.iterations++
         this.speed = Math.min(this.speed + 10, 500)
-        this.time.delayedCall(15000 - this.speed, this.spawnObstacle, [], this)
+        delayBetweenObstacles-= 20
+        this.time.delayedCall(10000 - this.speed, this.spawnObstacle, [], this)
 
     }
        
@@ -132,7 +160,7 @@ class Play extends Phaser.Scene {
 
         this.middleHitbox.setVisible(false)
         this.middleHitbox.body.enable = false
-        this.time.delayedCall(1000, () => {
+        this.time.delayedCall(850, () => {
             this.middleHitbox.setVisible(true)
             this.middleHitbox.body.enable = true
         }, [], this)
@@ -143,6 +171,8 @@ class Play extends Phaser.Scene {
         if(obstacle.type === side) {
             obstacle.destroy()
             this.obstacleQueue.shift()
+            this.score++
+            this.scoreLeft.text = `Litter Collected: ${this.score}`
         }
     }
 
@@ -152,5 +182,18 @@ class Play extends Phaser.Scene {
             console.log('gameover')
         }
     }
-}
 
+    handleMissedObstacle(obstacle) {
+        if(obstacle.type !== 'middle') {
+            this.missedCount++
+            console.log('missed!')
+        }
+
+        if(this.missedCount >= 3) {
+            this.isGameOver = true
+            console.log('gameover')
+        }
+
+        obstacle.destroy()
+    }
+}
