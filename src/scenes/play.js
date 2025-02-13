@@ -61,11 +61,17 @@ class Play extends Phaser.Scene {
         this.player = this.add.sprite(game.config.width / 2, game.config.height / 1.2, 'player').setDepth(10).setScale(0.5)
 
         this.player.anims.play('run')
+
+        this.hasGameOverRun = false
     }  
 
     update() {
-        if(this.isGameOver) {
+        if(this.isGameOver && !this.hasGameOverRun) {
+            this.hasGameOverRun = true
             this.GameOver()
+        }
+
+        if(this.isGameOver) {
             if(Phaser.Input.Keyboard.JustDown(this.keyGrabLeft)) {
                 this.scene.restart()
             }
