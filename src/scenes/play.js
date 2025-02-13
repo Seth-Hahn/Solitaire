@@ -32,7 +32,7 @@ class Play extends Phaser.Scene {
         this.leftHitbox.body.enable = false
         this.rightHitbox = this.physics.add.sprite(game.config.width / 1.35, game.config.height / 1.3, null).setVisible(false)
         this.rightHitbox.body.enable = false
-        this.middleHitbox = this.physics.add.sprite(game.config.width / 2, game.config.height / 1.2, null).setVisible(true).setDepth(20)
+        this.middleHitbox = this.physics.add.sprite(game.config.width / 2, game.config.height / 1.1, null).setVisible(false).setDepth(20)
         this.middleHitbox.body.enable = true
 
         this.spawnObstacle()
@@ -83,6 +83,10 @@ class Play extends Phaser.Scene {
         } else if (Phaser.Input.Keyboard.JustDown(this.keyGrabRight)) {
             this.activateHitbox('right')
         } else if (Phaser.Input.Keyboard.JustDown(this.keyJump)) {
+            this.player.play('jump')
+            this.time.delayedCall(850, () => {
+                this.player.play('run')
+            }, [], this)
             this.jumpOver()
         }
 
@@ -177,7 +181,7 @@ class Play extends Phaser.Scene {
         this.middleHitbox.setVisible(false)
         this.middleHitbox.body.enable = false
         this.time.delayedCall(850, () => {
-            this.middleHitbox.setVisible(true)
+            this.middleHitbox.setVisible(false)
             this.middleHitbox.body.enable = true
         }, [], this)
 

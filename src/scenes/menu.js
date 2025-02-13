@@ -23,7 +23,7 @@ class Menu extends Phaser.Scene {
     }
 
     create() {
-        console.log("menuscene")
+        //running animation
         this.anims.create( {
             key: 'run',
             frames: this.anims.generateFrameNumbers('player', {start: 0 , end: 1}),
@@ -31,6 +31,15 @@ class Menu extends Phaser.Scene {
             repeat: -1
             
         })
+
+        //jumping animation
+        this.anims.create( {
+            key: 'jump',
+            frames: [{key: 'player', frame: 2}],
+            frameRate: 1,
+            repeat: 0
+        })
+
         this.scene.start("playScene")
     }
 
