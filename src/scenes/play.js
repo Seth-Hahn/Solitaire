@@ -125,6 +125,8 @@ class Play extends Phaser.Scene {
 
     spawnObstacle() {
 
+        if(this.isGameOver) return
+        
         let delayBetweenObstacles = 1000
         for(let i = 0; i < this.iterations; i ++) {
             this.time.delayedCall(i * delayBetweenObstacles, () => { //delay spawns between obstacles
@@ -181,7 +183,8 @@ class Play extends Phaser.Scene {
     }
        
     activateHitbox(side) {
-        //if(this.isGameOver) return
+        if(this.isGameOver) return
+
         this.sound.play('grab')
         if(side === 'left') {
             this.leftHitbox.setVisible(true)
@@ -203,7 +206,7 @@ class Play extends Phaser.Scene {
     }
 
     jumpOver() {
-        //if (this.isGameOver) return
+        if (this.isGameOver) return
 
         this.middleHitbox.setVisible(false)
         this.middleHitbox.body.enable = false
@@ -215,6 +218,8 @@ class Play extends Phaser.Scene {
     }
 
     handleHit(obstacle, side) {
+        if(this.isGameOver) return 
+
         if(obstacle.type === side) {
             obstacle.destroy()
             this.obstacleQueue.shift()
@@ -261,12 +266,5 @@ class Play extends Phaser.Scene {
         this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', gameOverConfig).setOrigin(0.5).setDepth(50)
         this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (A) to Restart or (D) for Menu', gameOverConfig).setOrigin(0.5).setDepth(50)
 
-        if(Phaser.Input.Keyboard.JustDown(this.keyGrabLeft)) {
-            this.scene.restart()
-        }
-        if(Phaser.Input.Keyboard.JustDown(this.keyGrabRight)) {
-            // go to menu
-            this.scene.start('menuScene')
-        }
     }
 }
