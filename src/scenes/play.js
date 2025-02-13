@@ -126,7 +126,7 @@ class Play extends Phaser.Scene {
     spawnObstacle() {
 
         if(this.isGameOver) return
-        
+
         let delayBetweenObstacles = 1000
         for(let i = 0; i < this.iterations; i ++) {
             this.time.delayedCall(i * delayBetweenObstacles, () => { //delay spawns between obstacles
@@ -229,14 +229,18 @@ class Play extends Phaser.Scene {
     }
 
     handleMiddleHit(obstacle) {
+        if(this.isGameOver) return 
+
         if(this.middleHitbox.active) {
             this.isGameOver = true
-            this.player.destroy()
+            this.player.setVisible(false)
             console.log('gameover')
         }
     }
 
     handleMissedObstacle(obstacle) {
+        if(this.isGameOver) return
+
         if(obstacle.type !== 'middle') {
             this.missedCount++
             this.missedText.text = `Litter Missed: ${this.missedCount}`
@@ -266,5 +270,6 @@ class Play extends Phaser.Scene {
         this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', gameOverConfig).setOrigin(0.5).setDepth(50)
         this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (A) to Restart or (D) for Menu', gameOverConfig).setOrigin(0.5).setDepth(50)
 
+        return 
     }
 }

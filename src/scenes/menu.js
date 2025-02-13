@@ -27,10 +27,15 @@ class Menu extends Phaser.Scene {
         this.load.audio('right', './assets/mp3/right.mp3')
         this.load.audio('jump', './assets/mp3/jump.mp3')
         this.load.audio('grab', './assets/mp3/grab.mp3')
+        this.load.audio('BGM', './assets/mp3/Embrace.mp3')
     }
 
     create() {
 
+        //looping music
+        this.music = this.sound.add('BGM', {loop: true})
+        this.music.setVolume(0.3)
+        this.music.play()
         //start button
         this.startKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
         //running animation
