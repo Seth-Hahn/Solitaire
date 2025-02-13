@@ -56,7 +56,7 @@ class Play extends Phaser.Scene {
         } 
         this.score = 0 //based on pieces of trash collected
         this.scoreLeft = this.add.text(game.config.width / 40 , game.config.height / 40, `Litter Collected: ${this.score}`, scoreConfig).setDepth(50)
-
+        this.missedText = this.add.text(game.config.width / 40 , game.config.height / 8, `Litter Missed: ${this.missedCount}`, scoreConfig).setDepth(50)
         //put player in field
         this.player = this.add.sprite(game.config.width / 2, game.config.height / 1.2, 'player').setDepth(10).setScale(0.5)
 
@@ -222,6 +222,7 @@ class Play extends Phaser.Scene {
     handleMiddleHit(obstacle) {
         if(this.middleHitbox.active) {
             this.isGameOver = true
+            this.player.destroy()
             console.log('gameover')
         }
     }
@@ -229,6 +230,7 @@ class Play extends Phaser.Scene {
     handleMissedObstacle(obstacle) {
         if(obstacle.type !== 'middle') {
             this.missedCount++
+            this.missedText.text = `Litter Missed: ${this.missedCount}`
             console.log('missed!')
         }
 
