@@ -16,6 +16,11 @@ class Menu extends Phaser.Scene {
             frameWidth: 213,
             frameHeight: 240
         })
+
+        this.load.spritesheet('playerGrab', './assets/img/mapleManGrab.png', {
+            frameWidth: 640,
+            frameHeight : 480
+        })
         //load sounds
         this.load.audio('left', './assets/mp3/left.mp3')
         this.load.audio('right', './assets/mp3/right.mp3')
@@ -36,6 +41,21 @@ class Menu extends Phaser.Scene {
         this.anims.create( {
             key: 'jump',
             frames: [{key: 'player', frame: 2}],
+            frameRate: 1,
+            repeat: 0
+        })
+
+        //grabbing animations
+        this.anims.create( {
+            key: 'grableft',
+            frames: [{key: 'playerGrab', frame: 0}],
+            frameRate: 1,
+            repeat: 0
+        })
+
+        this.anims.create( {
+            key: 'grabRight',
+            frames: [{key: 'playerGrab', frame: 1}],
             frameRate: 1,
             repeat: 0
         })

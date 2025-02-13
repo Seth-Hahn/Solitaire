@@ -79,8 +79,31 @@ class Play extends Phaser.Scene {
 
         //listen for key presses
         if(Phaser.Input.Keyboard.JustDown(this.keyGrabLeft)) {
+            this.player.play('grableft')
+            this.player.setPosition(game.config.width / 3.1, game.config.height / 1.4)
+            this.time.delayedCall(200, () => { // Hold for 200 frames (~3.3 sec)
+                this.player.anims.pause(); // Pause animation (holds last frame)
+            });
+        
+            this.time.delayedCall(200, () => { // After hold, resume running
+                this.player.anims.resume(); // Resume animation system
+                this.player.play('run'); // Go back to running
+                this.player.setPosition(game.config.width / 2, game.config.height / 1.2)
+            }, [], this);
             this.activateHitbox('left')
+
         } else if (Phaser.Input.Keyboard.JustDown(this.keyGrabRight)) {
+            this.player.play('grabRight')
+            this.player.setPosition(game.config.width / 1.49, game.config.height / 1.45)
+            this.time.delayedCall(200, () => { // Hold for 200 frames (~3.3 sec)
+                this.player.anims.pause(); // Pause animation (holds last frame)
+            });
+        
+            this.time.delayedCall(200, () => { // After hold, resume running
+                this.player.anims.resume(); // Resume animation system
+                this.player.play('run'); // Go back to running
+                this.player.setPosition(game.config.width / 2, game.config.height / 1.2)
+            }, [], this);
             this.activateHitbox('right')
         } else if (Phaser.Input.Keyboard.JustDown(this.keyJump)) {
             this.player.play('jump')
