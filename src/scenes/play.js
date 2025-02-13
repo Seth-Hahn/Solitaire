@@ -56,9 +56,23 @@ class Play extends Phaser.Scene {
         } 
         this.score = 0 //based on pieces of trash collected
         this.scoreLeft = this.add.text(game.config.width / 40 , game.config.height / 40, `Litter Collected: ${this.score}`, scoreConfig).setDepth(50)
+
+        //put player in field
+        this.player = this.add.sprite(game.config.width / 2, game.config.height / 1.2, 'player').setDepth(10).setScale(0.5)
+
+        this.player.anims.play('run')
     }  
 
     update() {
+        if(this.isGameOver) {
+            this.GameOver()
+            if(Phaser.Input.Keyboard.JustDown(this.keyGrabLeft)) {
+                this.scene.restart()
+            }
+            if(Phaser.Input.Keyboard.JustDown(this.keyGrabRight)) {
+                // go to menu
+            }
+        }
         //moving sky background
         this.sky.tilePositionX -= 1
         this.road.tilePositionY -= this.speed / 100
@@ -71,6 +85,7 @@ class Play extends Phaser.Scene {
         } else if (Phaser.Input.Keyboard.JustDown(this.keyJump)) {
             this.jumpOver()
         }
+
 
     }
 
@@ -90,17 +105,18 @@ class Play extends Phaser.Scene {
                 switch ((type)) { //add proper obstacle based on random selection
                     case 'left':
                         obstacle = this.physics.add.sprite(game.config.width / 4, game.config.height / 3, 'bottle')
-                        console.log('bottle')
+                        this.sound.play('left')
                         break
                 
                     case 'right':
                         obstacle = this.physics.add.sprite(game.config.width / 1.35 , game.config.height / 3, 'butt')
-                        console.log('butt')
+                        this.sound.play('right')
                         break
                     
                     case 'middle':
                         console.log('hole')
                         obstacle = this.physics.add.sprite(game.config.width / 2, game.config.height / 3, 'hole' ).setDepth(3).setScale(.5)
+                        this.sound.play('jump')
                         break
                 }
 
@@ -195,5 +211,21 @@ class Play extends Phaser.Scene {
         }
 
         obstacle.destroy()
+    }
+
+    GameOver() {
+        let gameOverConfig = {
+            fontFamily: 'Courier',
+            fontSize: '20px',
+            backgroundColor: '#046307',
+            color: '#FFFFFF',
+            align: 'right',
+            padding: {
+            top: 5,
+            bottom: 5,
+            },
+        } 
+        this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', gameOverConfig).setOrigin(0.5).setDepth(50)
+        this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (A) to Restart or (D) for Menu', gameOverConfig).setOrigin(0.5).setDepth(50)
     }
 }
