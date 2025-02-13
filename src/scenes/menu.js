@@ -11,7 +11,8 @@ class Menu extends Phaser.Scene {
         this.load.image('bottle', './assets/img/collectibleBottle.png')
         this.load.image('butt', "./assets/img/collectibleButt.png" )
         this.load.image('hole', './assets/img/obstacleHole.png' )
-
+        this.load.image('comic', './assets/img/mapleManComic.png')
+        this.load.image('title', './assets/img/mapleManCover.png')
         this.load.spritesheet('player', './assets/img/mapleManRunning.png', {
             frameWidth: 213,
             frameHeight: 240
@@ -25,9 +26,13 @@ class Menu extends Phaser.Scene {
         this.load.audio('left', './assets/mp3/left.mp3')
         this.load.audio('right', './assets/mp3/right.mp3')
         this.load.audio('jump', './assets/mp3/jump.mp3')
+        this.load.audio('grab', './assets/mp3/grab.mp3')
     }
 
     create() {
+
+        //start button
+        this.startKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
         //running animation
         this.anims.create( {
             key: 'run',
@@ -60,10 +65,53 @@ class Menu extends Phaser.Scene {
             repeat: 0
         })
 
-        this.scene.start("playScene")
+        //add opening comic to scene
+        if(!this.registry.get("comicPlayed")) {
+            this.registry.set("comicPlayed", true)
+            this.comic = this.add.image(0,0, 'comic').setOrigin(0, 0)
+
+            //screen dimensions to get comic panel sizing
+            let screenWidth = this.game.config.width
+            let screenHeight = this.game.config.height
+
+            //panel sizes
+            let panelWidth = screenWidth / 3
+            let panelHeight = screenHeight / 2
+            
+            // Create 5 rectangles covering panels 2-6
+            this.rectangles = [
+                0, //this value does nothing but help sequence the panel deletion later on 
+                this.add.rectangle(panelWidth * 1.5, panelHeight * .5, panelWidth, panelHeight, 0x000000),  // Panel 2
+                this.add.rectangle(panelWidth * 2.5, panelHeight * .5, panelWidth, panelHeight, 0x000000),  // Panel 3
+                this.add.rectangle(panelWidth * .5, panelHeight * 1.5, panelWidth, panelHeight, 0x000000),  // Panel 4
+                this.add.rectangle(panelWidth * 1.5 , panelHeight * 1.5 , panelWidth, panelHeight, 0x000000),  // Panel 5
+                this.add.rectangle(panelWidth * 2.5, panelHeight * 1.5, panelWidth, panelHeight, 0x000000)   // Panel 6
+            ];
+
+            for(let i = 1; i <= 5; i++) {
+                this.time.delayedCall(i * 3000, () => 
+                {
+                    this.rectangles[i].destroy()
+                }) 
+            }
+            this.time.delayedCall(18000, () => { //show title screen
+            
+                this.add.image(0,0, 'title').setOrigin(0, 0)
+
+            })
+        } else {
+            this.add.image(0,0, 'title').setOrigin(0, 0)
+        }
     }
 
+
+
+
     update() {
+
+        if(Phaser.Input.Keyboard.JustDown(this.startKey)) {
+            this.scene.start("playScene")
+        }
 
     }
 }
