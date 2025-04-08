@@ -2,15 +2,54 @@
 --class inheritence based on code found at: https://stackoverflow.com/questions/65961478/how-to-mimic-simple-inheritance-with-base-and-child-class-constructors-in-lua-t
 
 DrawDeck = {}
-function DrawDeck:new(stack)
+function DrawDeck:new(xPos, yPos)
   DrawDeck.__index = DrawDeck
   setmetatable(DrawDeck, {__index = CardHolder})
   
   
-  local drawDeck = CardHolder:new()
+  local drawDeck = CardHolder:new(xPos, yPos)
   setmetatable(drawDeck, DrawDeck)
   
-  drawDeck.stack = stack
+  -- Create an Unshuffled Deck
+  suits = { "c", "d", "s", "h" }
+  ranks = { "2", "3", "4" , 
+            "5", "6", "7",  
+            "8", "9","10", 
+            "J", "Q","K", "A" }
+          
+  for suit = 1, 4, 1 do 
+    for rank = 1, 13, 1 do
+      card = PlayingCard:new(suits[suit], ranks[rank])
+      table.insert(drawDeck.cards, card)
+    end
+  end
+  
   return drawDeck
 end
 
+
+-- Table shuffle based on code found at : https://stackoverflow.com/questions/35572435/how-do-you-do-the-fisher-yates-shuffle-in-lua
+function DrawDeck:shuffleDeck()
+  for i = #self.cards, 2, -1 do
+    local j = math.random(i)
+    self.cards[i], self.cards[j] = self.cards[j], self.cards[i]
+  end
+end
+
+function DrawDeck:drawToScreen()
+  for k, v in pairs(self.cards) do
+  love.graphics.draw(v.frontFace, 10 * k, 10 * k)
+  end
+  
+  --create rectangle to show card holder position
+  love.graphics.setColor(0, 0, 0)
+  local holderGraphic = love.graphics.rectangle('line', self.x, self.y, cardWidth, cardHeight)
+  love.graphics.setColor(255,255,255)
+  
+  --draw down facing cards to represent the draw deck
+  --for k, v in pairs(self.cards) do
+    --love.graphics.draw(v.backFace, self.x * (k * .01) , self.y)
+  --end
+  
+  
+end
