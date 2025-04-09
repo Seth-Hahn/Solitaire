@@ -31,21 +31,20 @@ function love.load()
       local tempCard = table.remove(deck.cards) -- take top card of draw deck
       table.insert(cardColumnGroup[i].cards, tempCard) --insert into card column
       tempCard.x = cardColumnGroup[i].x --update card coordinates
-      tempCard.y = cardColumnGroup[i].y
+      tempCard.y = cardColumnGroup[i].y + (j*20)
       if(i == j) then --last card in each column row should always be face up
         tempCard.isFaceUp = true
       end
     end
-    print(#cardColumnGroup[i].cards)
   end  
 end
 
 function love.draw()
   love.graphics.draw(background)
-  --deck:drawToScreen()
+  deck:drawToScreen()
   
   for i = 1, #cardColumnGroup, 1 do
-    cardColumnGroup[i]:drawToScreen(20)
+    cardColumnGroup[i]:drawToScreen(0)
   end 
  
 
@@ -55,21 +54,47 @@ end
 -------Player Controls----------
 
 selectedCard = nil --holds card selected by mouse press
+isDragging = false --determines when cards are being dragged on screen
 
 function love.mousepressed(mx, my, button)
   if button == 1 then
     selectedCard = nil --deselects if nothing is clicked
-    
-    for _, CardColumn in ipairs(cardColumnGroup) do -- go through each column of cards
-      for cardIndex, Card in ipairs(CardColumn) do -- go through each card in the column
+    --search in reverse order allows for proper card selection
+    for columnIndex = #cardColumnGroup, 1, -1 do -- go through each column of cards
+      local CardColumn = cardColumnGroup[columnIndex]
+      
+      for cardIndex = #CardColumn.cards, 1, -1 do -- go through each card in the column
+        local Card = CardColumn.cards[cardIndex]
+        
         if clickOnCard(mx, my, Card) then
           selectedCard = Card --hold the card which was clicked
-          break
+          isDragging = true --allow card to be dragged
+          print(selectedCard.suit, selectedCard.rank)
+          return
+          end
+  
         end
+        
       end
+      
     end
+end
+
+function love.mousemoved(mx, my) --drag cards along with mouse
+  if isDragging and selectedCard  then
+    selectedCard.x = mx
+    selectedCard.y = my
   end
 end
+
+function love.mousereleased(mx, my, button)
+  if button == 1 then
+    isDragging = false
+    selectedCard = nil
+  end
+end
+
+
  
  
  function clickOnCard(mx, my, card)
