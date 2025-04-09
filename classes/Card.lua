@@ -1,7 +1,7 @@
 PlayingCard = {}
 
 
-function PlayingCard:new(suit, rank)
+function PlayingCard:new(suit, rank, xPos, yPos)
   local playingCard = {}
   
   setmetatable(playingCard, {__index = PlayingCard})
@@ -10,6 +10,13 @@ function PlayingCard:new(suit, rank)
   playingCard.rank = rank
   playingCard.frontFace = love.graphics.newImage("assets/img/Cards/" .. suit .. rank .. ".png")
   playingCard.backFace = love.graphics.newImage("assets/img/Cards/card_back.png")
+  playingCard.x = xPos
+  playingCard.y = yPos
+  playingCard.width = playingCard.frontFace:getWidth()
+  playingCard.height = playingCard.frontFace:getHeight()
+  playingCard.isFaceUp = false
   return playingCard
 end
 
+
+--function PlayingCard:grab(

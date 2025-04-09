@@ -14,3 +14,4 @@ function CardColumn:new(xPos, yPos)
   
   return cardColumn
 end
+
