@@ -15,6 +15,7 @@ function PlayingCard:new(suit, rank, xPos, yPos)
   playingCard.width = playingCard.frontFace:getWidth()
   playingCard.height = playingCard.frontFace:getHeight()
   playingCard.isFaceUp = false
+  playingCard.group = nil --determines where the playing card is
   return playingCard
 end
 

@@ -6,7 +6,7 @@ require "classes/CardColumn"
 
 
 screenWidth, screenHeight = love.graphics.getDimensions()
-
+UniversalCardSet = {} --used to access cards when moving them
 function love.load()
   -- load green background
   background = love.graphics.newImage("assets/img/solitaireBackground.png")
@@ -18,6 +18,9 @@ function love.load()
   --1. initialize and shuffle deck
   deck = DrawDeck:new(screenWidth / 40, screenHeight / 10)
   deck:shuffleDeck()
+  for _, cards in ipairs(deck.cards) do
+    table.insert(UniversalCardSet, cards) -- put cards into universal card set
+  end
   
   --2. create the card columns
   cardColumnGroup = {} --group all the card columns into a larger group
@@ -59,25 +62,18 @@ isDragging = false --determines when cards are being dragged on screen
 function love.mousepressed(mx, my, button)
   if button == 1 then
     selectedCard = nil --deselects if nothing is clicked
-    --search in reverse order allows for proper card selection
-    for columnIndex = #cardColumnGroup, 1, -1 do -- go through each column of cards
-      local CardColumn = cardColumnGroup[columnIndex]
-      
-      for cardIndex = #CardColumn.cards, 1, -1 do -- go through each card in the column
-        local Card = CardColumn.cards[cardIndex]
-        
-        if clickOnCard(mx, my, Card) then
-          selectedCard = Card --hold the card which was clicked
+    
+    for _, card in ipairs(UniversalCardSet) do
+        if clickOnCard(mx, my, card) then
+          selectedCard = card --hold the card which was clicked
           isDragging = true --allow card to be dragged
           print(selectedCard.suit, selectedCard.rank)
           return
-          end
-  
         end
-        
-      end
-      
+  
     end
+        
+  end
 end
 
 function love.mousemoved(mx, my) --drag cards along with mouse
