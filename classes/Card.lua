@@ -21,3 +21,17 @@ end
 
 
 --function PlayingCard:grab(
+function PlayingCard:moveCardFromTo(newGroup)
+  for k, card in ipairs(self.group) do --search through the card's group and remove it from its position
+    if self == card then
+      table.remove(self.group, k)
+    end
+  end
+  
+  self.group = newGroup --switch card's group reference to new group
+  table.insert(newGroup, self)
+  
+  --update card coordinates to new position
+  self.x = newGroup[1].x
+  self.y = newGroup[#newGroup].y  
+end

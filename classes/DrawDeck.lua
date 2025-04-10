@@ -21,6 +21,7 @@ function DrawDeck:new(xPos, yPos)
     for rank = 1, 13, 1 do
       card = PlayingCard:new(suits[suit], ranks[rank], xPos, yPos)
       table.insert(drawDeck.cards, card)
+      card.group = drawDeck.cards
     end
   end
   
@@ -37,9 +38,9 @@ function DrawDeck:shuffleDeck()
 end
 
 function DrawDeck:drawToScreen()
-  for k, card in pairs(self.cards) do
-  love.graphics.draw(card.frontFace, card.x, card.y + (k * 20) )
-  end
+  --for k, card in pairs(self.cards) do
+  --love.graphics.draw(card.frontFace, card.x, card.y + (k * 20) )
+  --end
   
   --create rectangle to show card holder position
   --love.graphics.setColor(0, 0, 0)
@@ -47,9 +48,9 @@ function DrawDeck:drawToScreen()
   --love.graphics.setColor(255,255,255)
   
   --draw down facing cards to represent the draw deck
-  --for k, card in pairs(self.cards) do
-  --  love.graphics.draw(card.backFace, self.x * (k * .01) , self.y)
-  --end
+  for k, card in pairs(self.cards) do
+    love.graphics.draw(card.backFace, self.x * (k * .01) , self.y)
+  end
   
   
 end

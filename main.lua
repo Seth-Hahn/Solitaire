@@ -1,12 +1,13 @@
 require "classes/Card"
 require "classes/CardHolder"
-require "classes/Stack"
 require "classes/DrawDeck"
 require "classes/CardColumn"
-
+require "classes/AceHolder"
 
 screenWidth, screenHeight = love.graphics.getDimensions()
 UniversalCardSet = {} --used to access cards when moving them
+
+
 function love.load()
   -- load green background
   background = love.graphics.newImage("assets/img/solitaireBackground.png")
@@ -35,11 +36,18 @@ function love.load()
       table.insert(cardColumnGroup[i].cards, tempCard) --insert into card column
       tempCard.x = cardColumnGroup[i].x --update card coordinates
       tempCard.y = cardColumnGroup[i].y + (j*20)
+      tempCard.group = cardColumnGroup[i].cards
       if(i == j) then --last card in each column row should always be face up
         tempCard.isFaceUp = true
       end
     end
   end  
+  
+  --4. Initialize ace holding spots
+  aceHolderGroup = {} --group the 4 aceholders together
+  for i = 1, 4, 1 do
+    table.insert(aceHolderGroup, AceHolder:new(screenWidth / 1.1, (screenHeight) - (75 * i) ) )    
+  end
 end
 
 function love.draw()
@@ -49,9 +57,13 @@ function love.draw()
   for i = 1, #cardColumnGroup, 1 do
     cardColumnGroup[i]:drawToScreen(0)
   end 
- 
-
+  
+  for i = 1, #aceHolderGroup, 1 do
+    aceHolderGroup[i]:drawToScreen(0)
+  end
 end
+
+
 
 
 -------Player Controls----------
@@ -67,7 +79,6 @@ function love.mousepressed(mx, my, button)
         if clickOnCard(mx, my, card) then
           selectedCard = card --hold the card which was clicked
           isDragging = true --allow card to be dragged
-          print(selectedCard.suit, selectedCard.rank)
           return
         end
   
@@ -77,17 +88,25 @@ function love.mousepressed(mx, my, button)
 end
 
 function love.mousemoved(mx, my) --drag cards along with mouse
-  if isDragging and selectedCard  then
+  if isDragging and selectedCard and selectedCard.isFaceUp then
     selectedCard.x = mx
     selectedCard.y = my
   end
 end
 
 function love.mousereleased(mx, my, button)
-  if button == 1 then
+  if button == 1 and selectedCard.isFaceUp then
+    
+    for _, card in ipairs(UniversalCardSet) do --iterate through every card 
+      if clickOnCard(mx, my, card)  then --check if the held card is released on top of another card
+          selectedCard:moveCardFromTo(card.group)
+      end
+    end
+          
     isDragging = false
     selectedCard = nil
-  end
+    
+  end 
 end
 
 

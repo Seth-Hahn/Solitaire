@@ -19,13 +19,13 @@ function CardHolder:drawToScreen(offset) --offset determines how spread out each
   --for k, v in pairs(self.cards) do
   -- love.graphics.draw(v.frontFace, 10 * k, 10 * k)
   --end
-  for k, card in pairs(self.cards) do
-  if card.isFaceUp then
-    love.graphics.draw(card.frontFace, card.x, card.y + (offset * k) )
-  else 
-    love.graphics.draw(card.backFace, card.x, card.y + (offset * k) )
+  for k, card in ipairs(self.cards) do
+    if card.isFaceUp then
+      love.graphics.draw(card.frontFace, card.x, card.y + (offset * k) )
+    else 
+      love.graphics.draw(card.backFace, card.x, card.y + (offset * k) )
+    end
   end
-end
 
   
 
