@@ -55,11 +55,22 @@ function love.draw()
   deck:drawToScreen()
   
   for i = 1, #cardColumnGroup, 1 do
-    cardColumnGroup[i]:drawToScreen(0)
+    cardColumnGroup[i]:drawToScreen(20)
   end 
   
   for i = 1, #aceHolderGroup, 1 do
     aceHolderGroup[i]:drawToScreen(0)
+  end
+end
+
+function love.update()
+  if isMouseDown == false then
+    for _, cardColumn in ipairs(cardColumnGroup) do
+      for k, card in ipairs(cardColumn.cards) do 
+        card.x = cardColumn.x
+        card.y = cardColumn.y + (40 * k)
+      end
+    end
   end
 end
 
@@ -70,9 +81,11 @@ end
 
 selectedCard = nil --holds card selected by mouse press
 isDragging = false --determines when cards are being dragged on screen
+isMouseDown = false
 
 function love.mousepressed(mx, my, button)
   if button == 1 then
+    isMouseDown = true
     selectedCard = nil --deselects if nothing is clicked
     
     for _, card in ipairs(UniversalCardSet) do
@@ -101,25 +114,26 @@ function love.mousemoved(mx, my) --drag cards along with mouse
       
       if selectedCard ~= card and isCardStack then --update coordinates of cards below the selected (dragged) card
         card.x = mx
-        card.y = selectedCard.y + (10 * k)
+        card.y = my + (5 * k - 1)
       end
     end
   end
 end
 
 function love.mousereleased(mx, my, button)
-  if button == 1 and selectedCard.isFaceUp then
-    
-    for _, card in ipairs(UniversalCardSet) do --iterate through every card 
-      if clickOnCard(mx, my, card)  then --check if the held card is released on top of another card
-          selectedCard:moveCardFromTo(card.group)
+  if button == 1 then
+    isMouseDown = false
+  end
+    if selectedCard and  selectedCard.isFaceUp then
+      for _, card in ipairs(UniversalCardSet) do --iterate through every card 
+        if clickOnCard(mx, my, card) and card.isFaceUp then --check if the held card is released on top of another card
+            selectedCard:moveCardFromTo(card.group)
+        end
       end
-    end
-          
-    isDragging = false
-    selectedCard = nil
+      isDragging = false
+      selectedCard = nil
     
-  end 
+    end 
 end
 
 

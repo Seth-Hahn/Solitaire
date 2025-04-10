@@ -22,34 +22,29 @@ end
 
 --function PlayingCard:grab(
 function PlayingCard:moveCardFromTo(newGroup)
-  local isCardStack = false
-  local tempCardHolder = {} --temporarily store cards being pulled in a stack to move from one table to another
-  local cardStackPosition = #self.group --determines position of selected card within its current group
-  
-  for k, card in ipairs(self.group) do -- 1. search through the card's group and remove it from its position
-    if self == card or isCardStack then
-      
-      if k ~= #self.group then -- 1b. pull any cards below the one being dragged (card stacks)
-        isCardStack = true
-        cardStackPosition = k 
-      end
-      
-      table.insert(tempCardHolder, card) -- hold card(s) in temporary table to move between groups
+  if newGroup == self.group then --1. set cards back in their original spot if placement is invalid / placed back on their group
+    return 
+  end
+
+  local cardIndex = 0 --2.  find the index of the card within its current group
+  for k, card in ipairs(self.group) do
+    if card == self then
+      cardIndex = k
+      break
     end
   end
   
-  for i = #self.group, cardStackPosition, -1 do --reverse iterate through original group to maintain card order during removal
+  local tempCardHolder = {} --3. store all the cards that need to be moved
+  for i = cardIndex, #self.group do
+    table.insert(tempCardHolder, self.group[i])
+  end
+  
+  for i = #self.group, cardIndex, -1 do --4. remove card(s) from their original group
     table.remove(self.group, i)
   end
   
-  for k, card in ipairs(tempCardHolder) do
-    card.group = newGroup --switch each cards group reference to the new group
-    table.insert(newGroup, card) --insert card into group
-    card.x = newGroup[1].x
-    card.y = newGroup[#newGroup].y 
-  end 
-  print('----------------------------------------------')
-  for k, card in ipairs(self.group) do
-    print(card.suit, card.rank)
+  for _, card in ipairs(tempCardHolder) do --5. add cards to new group
+    card.group = newGroup
+    table.insert(newGroup, card)
   end
 end
