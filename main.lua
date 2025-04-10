@@ -88,9 +88,22 @@ function love.mousepressed(mx, my, button)
 end
 
 function love.mousemoved(mx, my) --drag cards along with mouse
+  local tempCardStack = {}
+  local isCardStack = false
   if isDragging and selectedCard and selectedCard.isFaceUp then
     selectedCard.x = mx
     selectedCard.y = my
+    
+    for k, card in ipairs(selectedCard.group) do -- drag a stack of face up cards
+      if k ~= #selectedCard.group and selectedCard == card then
+        isCardStack = true
+      end
+      
+      if selectedCard ~= card and isCardStack then --update coordinates of cards below the selected (dragged) card
+        card.x = mx
+        card.y = selectedCard.y + (10 * k)
+      end
+    end
   end
 end
 
