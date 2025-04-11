@@ -111,12 +111,17 @@ function love.mousepressed(mx, my, button)
     isMouseDown = true
     selectedCard = nil --deselects if nothing is clicked
     
-    if clickOnCard(mx, my, deck) then --draw cards 
+    if clickOnCard(mx, my, deck) then --draw 3 (or less) cards from draw deck
       deck:pullCards()
     end 
     
-    for _, card in ipairs(UniversalCardSet) do
+    for _, card in ipairs(UniversalCardSet) do --check each card to see if it was clicked
         if clickOnCard(mx, my, card) then
+          for k, drawPileCard in ipairs(deck.drawPile) do --check if clicked card was in draw pile
+            if k ~= #deck.drawPile and card == drawPileCard then --if clicked card was in draw pile, it must be the top card to be valid
+              return 
+            end
+          end
           selectedCard = card --hold the card which was clicked
           isDragging = true --allow card to be dragged
           return
@@ -131,7 +136,6 @@ function love.mousemoved(mx, my) --drag cards along with mouse
   if isDragging and selectedCard and selectedCard.isFaceUp then
     selectedCard.x = mx
     selectedCard.y = my
-    print(selectedCard.suit, selectedCard.rank)
     for k, card in ipairs(selectedCard.group) do -- drag a stack of face up cards
       if k ~= #selectedCard.group and selectedCard == card then
         isCardStack = true

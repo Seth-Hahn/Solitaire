@@ -89,10 +89,9 @@ function DrawDeck:pullCards()
   
   
   if  #self.cards == 0 then --if draw deck is empty redistribute discard pile into draw deck
+    self:redistributeCards(self.drawPile, self.discardPile, #self.drawPile, false) --empty drawpile before cleaning discard
     self:redistributeCards(self.discardPile, self.cards, #self.discardPile, false)
-  end
-    
-  if #self.drawPile ~= 0 then --remove current draw pile cards into discard pile
+  elseif #self.drawPile ~= 0 then --remove current draw pile cards into discard pile
     self:redistributeCards(self.drawPile, self.discardPile, #self.drawPile, false)
   end
     
