@@ -10,6 +10,8 @@ function CardHolder:new(xPos, yPos)
   
   cardHolder.x = xPos
   cardHolder.y = yPos
+  cardHolder.width = cardWidth
+  cardHolder.height = cardHeight
   cardHolder.cards = {}
   return cardHolder
 end

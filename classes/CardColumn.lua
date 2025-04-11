@@ -9,6 +9,7 @@ function CardColumn:new(xPos, yPos)
   
   
   local cardColumn = CardHolder:new(xPos, yPos)
+  cardColumn.groupType = 'CardColumn'
   setmetatable(cardColumn, CardColumn)
 
   

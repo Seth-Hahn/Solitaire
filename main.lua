@@ -6,8 +6,23 @@ require "classes/AceHolder"
 
 screenWidth, screenHeight = love.graphics.getDimensions()
 UniversalCardSet = {} --used to access cards when moving them
+cardRankEnum = { --enum for rank values
+  ACE = 1,
+  TWO = 2, 
+  THREE = 3,
+  FOUR = 4,
+  FIVE = 5, 
+  SIX = 6,
+  SEVEN = 7,
+  EIGHT = 8,
+  NINE = 9,
+  TEN = 10,
+  JACK = 11,
+  QUEEN = 12,
+  KING = 13,
+}
 
-
+-----------------------love functions----------------------------------------------
 function love.load()
   -- load green background
   background = love.graphics.newImage("assets/img/solitaireBackground.png")
@@ -26,7 +41,7 @@ function love.load()
   --2. create the card columns
   cardColumnGroup = {} --group all the card columns into a larger group
   for i = 7, 1, -1 do
-    table.insert(cardColumnGroup, CardColumn:new( (screenWidth / 1.25) - (i * 75), screenHeight / 10))
+    table.insert(cardColumnGroup, CardColumn:new( (screenWidth / 1.25) - (i * 75), screenHeight / 10) )
   end 
   
   --3. distribute draw deck into the card columns
@@ -125,19 +140,54 @@ function love.mousereleased(mx, my, button)
     isMouseDown = false
   end
     if selectedCard and  selectedCard.isFaceUp then
-      for _, card in ipairs(UniversalCardSet) do --iterate through every card 
-        if clickOnCard(mx, my, card) and card.isFaceUp then --check if the held card is released on top of another card
-            selectedCard:moveCardFromTo(card.group)
+      
+      for _, cardColumn in ipairs(cardColumnGroup) do --iterate through the card columns to determine if card is placed in one 
+        
+        if clickOnCard(mx, my, cardColumn) then -- allows for kings to be placed in empty columns
+          if selectedCard.rank == cardRankEnum.KING then
+            selectedCard:moveCardFromTo(cardColumn.cards)
+          end
+          
+        end
+        for _, card in ipairs(cardColumn.cards) do -- check each card in each column to determine if placement is valid
+          if clickOnCard(mx, my, card) and card.isFaceUp then
+            if(checkValidCardPlacement(selectedCard, card, 'CardColumn')) then
+                selectedCard:moveCardFromTo(card.group)
+            end
+          end
         end
       end
+    end
+
+
       isDragging = false
       selectedCard = nil
     
     end 
+
+function checkValidCardPlacement(cardToPlace, destCard, destinationType)
+  if destinationType == 'CardColumn' then
+    if (cardToPlace.suit == 's' or cardToPlace.suit == 'c')  --diamnonds and hearts can only be placed on spades or clubs
+    and (destCard.suit == 'd' or destCard.suit == 'h') then
+      
+      if cardToPlace.rank + 1 == destCard.rank then --cards placed within columns must be one value lower than the current top card
+        return true
+      end
+    end
+    if (cardToPlace.suit == 'd' or cardToPlace.suit == 'h')  --clubs and spades can only be placed on hearts or clubs
+    and (destCard.suit == 'c' or destCard.suit == 's') then
+      
+      if cardToPlace.rank + 1 == destCard.rank then --cards placed within columns must be one value lower than the current top card
+        return true
+      end
+    end
+    
+      
+  end
+
+return false
 end
 
-
- 
  
  function clickOnCard(mx, my, card)
    return mx >= card.x and mx <= card.x + card.width and
