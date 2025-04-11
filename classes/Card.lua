@@ -34,7 +34,6 @@ function PlayingCard:new(suit, rank, xPos, yPos)
 end
 
 
---function PlayingCard:grab(
 function PlayingCard:moveCardFromTo(newGroup)
   if newGroup == self.group then --1. set cards back in their original spot if placement is invalid / placed back on their group
     return 

@@ -29,6 +29,7 @@ function love.load()
   
   --seed random number generator for deck shuffle
   math.randomseed(os.time())
+  math.random() math.random() math.random() --shuffle the randomizer a few times
   
   
   --1. initialize and shuffle deck
@@ -84,6 +85,13 @@ function love.update()
       for k, card in ipairs(cardColumn.cards) do 
         card.x = cardColumn.x
         card.y = cardColumn.y + (40 * k)
+      end
+    end
+    
+    for _, AceHolder in ipairs(aceHolderGroup) do
+      for k, card in ipairs(AceHolder.cards) do
+        card.x = AceHolder.x
+        card.y = AceHolder.y
       end
     end
   end
@@ -157,13 +165,18 @@ function love.mousereleased(mx, my, button)
           end
         end
       end
-    end
-
-
+      
+      
+      for _, AceHolder in ipairs(aceHolderGroup) do --check each aceholder to determine if card is being placed there
+        if( clickOnCard(mx, my, AceHolder) )  --if the mouse is released over the aceholder
+          and checkValidCardPlacement(selectedCard, AceHolder, 'AceHolder') then
+            selectedCard:moveCardFromTo(AceHolder.cards)
+        end
+      end
       isDragging = false
       selectedCard = nil
-    
-    end 
+  end
+end
 
 function checkValidCardPlacement(cardToPlace, destCard, destinationType)
   if destinationType == 'CardColumn' then
@@ -181,8 +194,18 @@ function checkValidCardPlacement(cardToPlace, destCard, destinationType)
         return true
       end
     end
-    
-      
+  end
+  
+  if destinationType == 'AceHolder' then
+    if destCard.currentValue == 0 and cardToPlace.rank == 1 then --aceholder is empty and card being placed is an ace
+      destCard.suit = cardToPlace.suit --aceholder now only holds this suit
+      destCard.currentValue = destCard.currentValue + 1
+      return true
+    elseif cardToPlace.rank == destCard.currentValue + 1 
+    and cardToPlace.suit == destCard.suit then
+      destCard.currentValue = destCard.currentValue + 1
+      return true
+    end
   end
 
 return false

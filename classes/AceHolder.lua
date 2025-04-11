@@ -10,7 +10,8 @@ function AceHolder:new(xPos, yPos)
   
   local  aceHolder = CardHolder:new(xPos, yPos)
   setmetatable(aceHolder, AceHolder)
-
+  aceHolder.currentValue = 0
+  aceHolder.suit = nil
   
   return aceHolder
 end
