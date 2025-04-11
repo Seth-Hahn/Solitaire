@@ -35,6 +35,8 @@ function DrawDeck:new(xPos, yPos)
     end
   end
   
+  drawDeck.drawPile = {}
+  drawDeck.discardPile = {}
   return drawDeck
 end
 
@@ -47,20 +49,61 @@ function DrawDeck:shuffleDeck()
   end
 end
 
-function DrawDeck:drawToScreen()
-  --for k, card in pairs(self.cards) do
-  --love.graphics.draw(card.frontFace, card.x, card.y + (k * 20) )
-  --end
-  
-  --create rectangle to show card holder position
-  --love.graphics.setColor(0, 0, 0)
-  --local holderGraphic = love.graphics.rectangle('line', self.x, self.y, cardWidth, cardHeight)
-  --love.graphics.setColor(255,255,255)
-  
-  --draw down facing cards to represent the draw deck
-  for k, card in pairs(self.cards) do
-    love.graphics.draw(card.backFace, self.x * (k * .01) , self.y)
+function DrawDeck:drawToScreen(heldCard)
+  --create rectangle to show card holder position if column is empty
+  if #self.cards == 0 then
+    love.graphics.setColor(0, 0, 0)
+    local deckHolderGraphic = love.graphics.rectangle('line', self.x, self.y, cardWidth, cardHeight)
+    love.graphics.setColor(255,255,255)
+  else 
+    --draw down facing cards to represent the draw deck
+    for k, card in pairs(self.cards) do
+      love.graphics.draw(card.backFace, self.x * (k * .01) , self.y)
+      card.x = self.x
+      card.y = self.y
+    end
   end
   
+   --create rectangle to show card holder position if column is empty
+  if #self.drawPile == 0 then
+    love.graphics.setColor(0, 0, 0)
+    local drawPileHolderGraphic = love.graphics.rectangle('line', self.x, self.y + 125, cardWidth, cardHeight)
+    love.graphics.setColor(255,255,255)
+  else 
+    for i = 1, #self.drawPile, 1 do
+      if self.drawPile[i] ~= heldCard then
+        self.drawPile[i].x = self.x
+        self.drawPile[i].y = self.y + (60 * i)
+      end
+        love.graphics.draw(self.drawPile[i].frontFace, self.drawPile[i].x, self.drawPile[i].y)
+    end
+  end
   
+
+  
+  
+end
+
+function DrawDeck:pullCards() 
+  numCardsToDraw = math.min(#self.cards, 3) -- pull max of 3 cards or less if there are fewer cards left in the deck
+  
+  
+  if  #self.cards == 0 then --if draw deck is empty redistribute discard pile into draw deck
+    self:redistributeCards(self.discardPile, self.cards, #self.discardPile, false)
+  end
+    
+  if #self.drawPile ~= 0 then --remove current draw pile cards into discard pile
+    self:redistributeCards(self.drawPile, self.discardPile, #self.drawPile, false)
+  end
+    
+  self:redistributeCards(self.cards, self.drawPile, numCardsToDraw, true) --draw cards into draw pile
+end
+
+function DrawDeck:redistributeCards(moveFrom, moveTo, numIterations, isFaceUp)
+    for i = 1, numIterations, 1 do
+      local cardToRedistribute = table.remove(moveFrom)
+      cardToRedistribute.isFaceUp = isFaceUp
+      table.insert(moveTo, cardToRedistribute)
+      cardToRedistribute.group = moveTo
+    end
 end

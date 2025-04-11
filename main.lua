@@ -68,7 +68,7 @@ end
 
 function love.draw()
   love.graphics.draw(background)
-  deck:drawToScreen()
+  deck:drawToScreen(selectedCard)
   
   for i = 1, #cardColumnGroup, 1 do
     cardColumnGroup[i]:drawToScreen(20)
@@ -111,15 +111,17 @@ function love.mousepressed(mx, my, button)
     isMouseDown = true
     selectedCard = nil --deselects if nothing is clicked
     
+    if clickOnCard(mx, my, deck) then --draw cards 
+      deck:pullCards()
+    end 
+    
     for _, card in ipairs(UniversalCardSet) do
         if clickOnCard(mx, my, card) then
           selectedCard = card --hold the card which was clicked
           isDragging = true --allow card to be dragged
           return
-        end
-  
+        end  
     end
-        
   end
 end
 
@@ -129,7 +131,7 @@ function love.mousemoved(mx, my) --drag cards along with mouse
   if isDragging and selectedCard and selectedCard.isFaceUp then
     selectedCard.x = mx
     selectedCard.y = my
-    
+    print(selectedCard.suit, selectedCard.rank)
     for k, card in ipairs(selectedCard.group) do -- drag a stack of face up cards
       if k ~= #selectedCard.group and selectedCard == card then
         isCardStack = true
