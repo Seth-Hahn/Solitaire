@@ -1,5 +1,25 @@
 Author: Seth Hahn
+--------------------------------------------------------------------
+Programming Patterns:
 
+  -Subclass Sandbox:
+    This was a pattern I moreso attempted to use than actually properly utilizing. I wanted    the CardHolder class to function as the baseclass and have provided operations be overwritten by the derived classes (DrawDeck, CardColumn, Aceholder), but the only operation that gets overwritten anywhere is the drawToScreen function which DrawDeck changes. I attempted to implement the card holders this way because I believed that each different card holding type in Solitaire has connected concepts, but each functions slightly differently and thus could each be built off of a shared class which allows them freedom to make changes as necessary.
+    
+  -Game Loop:
+    I used Love2D's game loop implementation to handle updating game data and rendering cards. Game Loops are a standard practice of Game Design and implementation, thus leading me to use it. 
+    
+--------------------------------------------------------------------
+Postmortem:
+
+  What I did well:
+    I think the overall logic and structure of my implementation is great, with a readable code structure that mostly avoids entangling functionality across objects. The functionality of the game is nearly entirely there, with remaining fixes being for smaller gameplay changes like making sure cards dragged from the suit piles do not drag as a stack. Otherwise, especially for the purposes of this assignment, the game functions as intended. 
+    
+  What I would change:
+    I would not try to force the subclass sandbox pattern into this assignment, or atleast be more intentional with my implementation of it. The implemention ended up being half-baked and more often than not made things messier rather than easier. I would also tie card rendering logic to the card class itself, rather than being handled by the card holders in an effort to further decouple game objects.
+
+--------------------------------------------------------------------
 Asset Credits: 
     - Playing Card Assets from: https://kenney.nl/assets/playing-cards-pack
+    - Everything else by me
     
+--------------------------------------------------------------------

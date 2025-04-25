@@ -115,7 +115,8 @@ function love.mousepressed(mx, my, button)
       deck:pullCards()
     end 
     
-    for _, card in ipairs(UniversalCardSet) do --check each card to see if it was clicked
+    for i = #UniversalCardSet, 1, -1 do --check each card to see if it was clicked
+      local card = UniversalCardSet[i]
         if clickOnCard(mx, my, card) then
           for k, drawPileCard in ipairs(deck.drawPile) do --check if clicked card was in draw pile
             if k ~= #deck.drawPile and card == drawPileCard then --if clicked card was in draw pile, it must be the top card to be valid
@@ -138,7 +139,7 @@ function love.mousemoved(mx, my) --drag cards along with mouse
     selectedCard.y = my
     for k, card in ipairs(selectedCard.group) do -- drag a stack of face up cards
       if k ~= #selectedCard.group and selectedCard == card then
-        isCardStack = true
+          isCardStack = true
       end
       
       if selectedCard ~= card and isCardStack then --update coordinates of cards below the selected (dragged) card

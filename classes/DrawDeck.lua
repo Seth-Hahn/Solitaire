@@ -100,7 +100,7 @@ end
 
 function DrawDeck:redistributeCards(moveFrom, moveTo, numIterations, isFaceUp)
     for i = 1, numIterations, 1 do
-      local cardToRedistribute = table.remove(moveFrom)
+      local cardToRedistribute = table.remove(moveFrom, 1)
       cardToRedistribute.isFaceUp = isFaceUp
       table.insert(moveTo, cardToRedistribute)
       cardToRedistribute.group = moveTo
