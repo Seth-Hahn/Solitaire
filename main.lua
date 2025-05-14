@@ -42,7 +42,7 @@ function love.load()
   --2. create the card columns
   cardColumnGroup = {} --group all the card columns into a larger group
   for i = 7, 1, -1 do
-    table.insert(cardColumnGroup, CardColumn:new( (screenWidth / 1.25) - (i * 75), screenHeight / 10) )
+    table.insert(cardColumnGroup, CardColumn:new( (screenWidth / 1.25) - (i * 75), screenHeight / 500) )
   end 
   
   --3. distribute draw deck into the card columns
@@ -53,6 +53,7 @@ function love.load()
       tempCard.x = cardColumnGroup[i].x --update card coordinates
       tempCard.y = cardColumnGroup[i].y + (j*20)
       tempCard.group = cardColumnGroup[i].cards
+      tempCard.inDrawDeck = false
       if(i == j) then --last card in each column row should always be face up
         tempCard.isFaceUp = true
       end
@@ -120,7 +121,7 @@ function love.mousepressed(mx, my, button)
         if clickOnCard(mx, my, card) then
           for k, drawPileCard in ipairs(deck.drawPile) do --check if clicked card was in draw pile
             if k ~= #deck.drawPile and card == drawPileCard then --if clicked card was in draw pile, it must be the top card to be valid
-              return 
+              --return 
             end
           end
           selectedCard = card --hold the card which was clicked

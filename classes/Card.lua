@@ -30,6 +30,7 @@ function PlayingCard:new(suit, rank, xPos, yPos)
   playingCard.height = playingCard.frontFace:getHeight()
   playingCard.isFaceUp = false
   playingCard.group = nil --reference to the group of cards the playing card currently belongs to
+  playingCard.inDrawDeck = nil
   return playingCard
 end
 
@@ -45,6 +46,13 @@ function PlayingCard:moveCardFromTo(newGroup)
       cardIndex = k
       break
     end
+  end
+  
+  if self.inDrawDeck == true then -- cards from the draw pile should have their own logic
+    table.remove(self.group, cardIndex)
+    table.insert(newGroup, self)
+    self.group = newGroup
+    return
   end
   
   local tempCardHolder = {} --3. store all the cards that need to be moved

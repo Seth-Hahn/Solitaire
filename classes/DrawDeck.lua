@@ -32,6 +32,7 @@ function DrawDeck:new(xPos, yPos)
       card = PlayingCard:new(suits[suit], rank, xPos, yPos)
       table.insert(drawDeck.cards, card)
       card.group = drawDeck.cards
+      card.inDrawDeck = true
     end
   end
   
