@@ -32,6 +32,7 @@ resetButton = {
 gameWon = false
 -----------------------love functions----------------------------------------------
 function love.load()
+  gameWon = false
   -- load green background
   background = love.graphics.newImage("assets/img/solitaireBackground.png")
   
@@ -71,7 +72,7 @@ function love.load()
   --4. Initialize ace holding spots
   aceHolderGroup = {} --group the 4 aceholders together
   for i = 1, 4, 1 do
-    table.insert(aceHolderGroup, AceHolder:new(screenWidth / 1.1, (screenHeight) - (75 * i) ) )    
+    table.insert(aceHolderGroup, AceHolder:new(screenWidth / 1.1, (screenHeight) - (75 * i)) )    
   end
 end
 
@@ -213,6 +214,8 @@ function love.mousereleased(mx, my, button)
         if( clickOnCard(mx, my, AceHolder) )  --if the mouse is released over the aceholder
           and checkValidCardPlacement(selectedCard, AceHolder, 'AceHolder') then
             selectedCard:moveCardFromTo(AceHolder.cards)
+            selectedCard.inAceHolder = true
+            selectedCard.correspondingAceHolder = AceHolder
         end
       end
       isDragging = false

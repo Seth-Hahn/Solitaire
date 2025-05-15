@@ -11,11 +11,7 @@ Programming Patterns:
 --------------------------------------------------------------------
 Postmortem:
 
-  What I did well:
-    I think the overall logic and structure of my implementation is great, with a readable code structure that mostly avoids entangling functionality across objects. The functionality of the game is nearly entirely there, with remaining fixes being for smaller gameplay changes like making sure cards dragged from the suit piles do not drag as a stack. Otherwise, especially for the purposes of this assignment, the game functions as intended. 
-    
-  What I would change:
-    I would not try to force the subclass sandbox pattern into this assignment, or atleast be more intentional with my implementation of it. The implemention ended up being half-baked and more often than not made things messier rather than easier. I would also tie card rendering logic to the card class itself, rather than being handled by the card holders in an effort to further decouple game objects.
+The main point of feedback I recieved on the first version of the Solitaire project was that all of the cards in the draw pile should be moveable. To address this my first plan was to add a new variable to the Card class called "inDrawDeck" which is a bool that determines if the card is in or out of the draw deck. Since cards cannot be put back into the draw deck once placed on the board, any time a card is removed from the draw deck this variable can be set to false. Then, in the card function MoveCardFromTo, there is a check that determines if the card is coming from the draw pile, and only allows that card to be moved around. This is done because otherwise if the 2nd or 3rd card from the 3 card draw is pulled, then it would drag the cards under it as a stack and cause cards to be in invalid positions. This turned out to work perfect and allowed me to go from the hard mode solitaire where only the top card is drawable to the easier version in which all 3 are usable.   
 
 --------------------------------------------------------------------
 Asset Credits: 

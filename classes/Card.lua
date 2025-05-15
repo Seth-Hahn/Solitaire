@@ -31,6 +31,8 @@ function PlayingCard:new(suit, rank, xPos, yPos)
   playingCard.isFaceUp = false
   playingCard.group = nil --reference to the group of cards the playing card currently belongs to
   playingCard.inDrawDeck = nil
+  playingCard.inAceHolder = false
+  playingCard.correspondingAceHolder = nil
   return playingCard
 end
 
@@ -48,7 +50,11 @@ function PlayingCard:moveCardFromTo(newGroup)
     end
   end
   
-  if self.inDrawDeck == true then -- cards from the draw pile should have their own logic
+  if self.inDrawDeck == true or self.inAceHolder then -- cards from the draw pile should have their own logic
+    if self.inAceHolder and self.correspondingAceHolder then
+      self.correspondingAceHolder.currentValue = self.correspondingAceHolder.currentValue - 1
+      self.correspondingAceHolder = nil
+    end
     table.remove(self.group, cardIndex)
     table.insert(newGroup, self)
     self.group = newGroup
