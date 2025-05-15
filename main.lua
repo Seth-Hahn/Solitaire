@@ -22,6 +22,14 @@ cardRankEnum = { --enum for rank values
   KING = 13,
 }
 
+resetButton = {
+  x = screenWidth / 10,
+  y = screenHeight - 80,
+  width = 80,
+  height = 40
+}
+
+gameWon = false
 -----------------------love functions----------------------------------------------
 function love.load()
   -- load green background
@@ -68,6 +76,7 @@ function love.load()
 end
 
 function love.draw()
+  love.graphics.setColor(1,1,1,1)
   love.graphics.draw(background)
   deck:drawToScreen(selectedCard)
   
@@ -78,6 +87,18 @@ function love.draw()
   for i = 1, #aceHolderGroup, 1 do
     aceHolderGroup[i]:drawToScreen(0)
   end
+  
+  if gameWon then
+    love.graphics.print("You Win!", screenWidth / 2, screenHeight / 2)
+  end
+  
+  love.graphics.setColor(256,256,256)
+  love.graphics.rectangle("fill", resetButton.x, resetButton.y, resetButton.width, resetButton.height)
+  love.graphics.setColor(0,0,0)
+  resetText = love.graphics.print("RESET", screenWidth / 8, screenHeight - 70)
+  
+  
+  
 end
 
 function love.update()
@@ -89,11 +110,19 @@ function love.update()
       end
     end
     
+    numCompletedAceHolders = 0
     for _, AceHolder in ipairs(aceHolderGroup) do
       for k, card in ipairs(AceHolder.cards) do
         card.x = AceHolder.x
         card.y = AceHolder.y
+        if k == cardRankEnum.KING then
+          numCompletedAceHolders = numCompletedAceHolders + 1
+        end
       end
+    end
+    
+    if numCompletedAceHolders == 4 then
+      gameWon = true
     end
   end
 end
@@ -115,6 +144,11 @@ function love.mousepressed(mx, my, button)
     if clickOnCard(mx, my, deck) then --draw 3 (or less) cards from draw deck
       deck:pullCards()
     end 
+    
+    if clickOnCard(mx, my, resetButton) then
+      love.load()
+      return 
+    end
     
     for i = #UniversalCardSet, 1, -1 do --check each card to see if it was clicked
       local card = UniversalCardSet[i]
